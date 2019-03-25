@@ -81,7 +81,7 @@ export default class TopTags extends Component {
 
         return(
             <div className="list-group-item">
-                <li>{tag}</li>
+                <a>{tag}</a>
                 <div className="buttons" style={{float: 'right'}}>
                     <button className="btn btn-outline-success" onClick={() => this.addTag(tag)}>
                     +

@@ -5,7 +5,7 @@ export default class AddedTags extends Component {
   createTags = tag => {
     return (
       <div className="list-group-item">
-        <li>{tag.text}</li>
+        <a>{tag.text}</a>
         <button className="button btn-danger" style={{float: "right"}}key={tag.key} onClick={() => this.props.removeTag(tag.key)}>
           X
         </button>

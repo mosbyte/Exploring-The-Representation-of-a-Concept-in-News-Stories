@@ -86,8 +86,8 @@ export default class Categorise extends Component {
         }
       }
       handleInput = e => {
-        var delimiters = [",", " "];
-        const itemText = e.target.value.toLowerCase();
+        var delimiters = [","];
+        const itemText = e.target.value;
         console.log(itemText)
         const currTag = { 
           text: itemText,
@@ -104,7 +104,12 @@ export default class Categorise extends Component {
     
       addTag = e => {
         e.preventDefault()
-        const newTag = this.state.currTag
+        var currTag = this.state.currTag;
+        const newTag = { 
+            text: currTag.text.toLowerCase().replace(/\s/g,''),
+            key: currTag.key
+          }
+        // newTag = newTag.text.toLowerCase().replace(/\s/g,'');
         if (newTag.text !== "") {
           console.log(newTag)
           const tags = [...this.state.tags, newTag]
