@@ -21,10 +21,11 @@ class App extends Component {
         <div className="mycontainer">
             <Switch>
                   <Route exact path='/' component={ Home } />
-
+                  {/* <Route path='/:id/' component={Categorise} /> */}
                   <Route path='/:id/categorise' component={ Categorise } />
-                  <Route path='/:which/edit/:id' component= {Edit } />                 
-                  <Route path='/:id/visualise' component={ Visualise } />
+                  <Route path='/:which/edit/:id' component= {Edit } />
+                  <Route path='/:id/visualise' component={Visualise}/>                 
+                  <Route path='/:id/visualise/:tag' component={ Visualise } />
                   <Route path='/:id/database' component={ Database } />
             </Switch>
         </div>

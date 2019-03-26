@@ -5,7 +5,8 @@ class NavDropdown extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        isToggleOn: false
+        isToggleOn: false,
+        tag: ''
       };
     }
     showDropdown(e) {
@@ -13,6 +14,26 @@ class NavDropdown extends React.Component {
       this.setState(prevState => ({
         isToggleOn: !prevState.isToggleOn
       }));
+    }
+    handleInput = e => {
+      this.setState({tag: e.target.value}); 
+    }
+    searchTag = e => {
+      var pieces = this.state.tag.toLowerCase().replace(/\s/g,'').split(":")
+      if(pieces[0] === 'chant'){
+        if(pieces[1] !== ''){
+          return '/chant/database/'+pieces[1]
+        }
+      }
+      else if(pieces[0]==='ritual'){
+        if(pieces[1] !== ''){
+          return '/ritual/database/'+pieces[1]
+        }
+      } 
+    }
+    location = () => {
+      var searchLink = this.searchTag()
+      return searchLink
     }
     render() {
       const classDropdownMenu = 'dropdown-menu' + (this.state.isToggleOn ? ' show' : '')
@@ -56,10 +77,11 @@ export default class Navbar extends Component {
                         </NavDropdown>
                     </ul>
                   </div>
-                  <form className="form-inline my-2 my-lg-0">
-                  {/* will only search headlines */}
+                  <form className="form-inline my-2 my-lg-0" onSubmit={this.search} onChange={this.handleInput}>
+                   {/* will only search headlines */}
                     <input className="form-control mr-sm-2" type="search" placeholder="eg. chant: hooligans" aria-label="Search"></input>
                     <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    {/* <Link to={this.location}>Search</Link> */}
                   </form>
                 </div>
               </header> <br/>

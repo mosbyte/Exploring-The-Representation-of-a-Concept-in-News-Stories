@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import TableRow from './TableRow';
+import Stories from './components/ShowStories'
+// import TableRow from './TableRow';
 
 export default class Database extends Component {
 
@@ -60,13 +61,6 @@ export default class Database extends Component {
       }   
       e.preventDefault();
     }
-    tabRow(){
-      var theEditPath = this.state.editPath
-      var arr = this.state.news
-      return this.state.news.map(function(object, i){
-          return <TableRow obj={object} index={arr.indexOf(object)+1} key={i} which={theEditPath} />;
-      });
-    }
 
     render() {
       return (
@@ -76,21 +70,13 @@ export default class Database extends Component {
             <input className="form-control mr-sm-2" onChange={this.handleInput} type="search" placeholder="tag (e.g religion)" aria-label="Search" style={{width:"90%"}}></input>
             <button className="btn btn-outline-success my-2 my-sm-0" type="submit" style={{width: "9%"}}>Search</button>
           </form>
-            <table className="table table-striped" style={{ marginTop: 20 }}>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Title</th>
-                  <th>Status</th>
-                  <th>Tags</th>
-                  <th>Link</th>
-                  <th colSpan="2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                { this.tabRow() }
-              </tbody>
-            </table>
+
+          <Stories
+              URL={this.URL}
+              editPath={this.state.editPath}
+              stories={this.state.news}>
+          </Stories>
+          
         </div>
       );
     }

@@ -11,7 +11,6 @@ export default class AddedTags extends Component {
         </button>
       </div>
     )
-    
   }
   render() {
     const tagEntries = this.props.entries

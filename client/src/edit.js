@@ -158,7 +158,7 @@ export default class Edit extends Component {
         // await axios.post(this.URL+'/news/add/'+this.state.category, obj).then(res => console.log(res.data));
         axios.post(this.URL+'/update/old/'+this.state.id, obj).then(res => console.log(res.data));
        
-        this.props.history.push('/chant/database');
+        this.props.history.push(this.URL+'/database');
       }
      
       render() {
