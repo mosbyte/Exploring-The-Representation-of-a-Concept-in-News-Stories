@@ -7,12 +7,14 @@ export default class TopTags extends Component {
         this.setTags = this.setTags.bind(this);
         this.state = {
             data: [],
+            storyWords:[],
             allTags:[]
         }
     }
     componentDidMount(){
         // axios.get('http://localhost:4000/news/toptags')
         console.log("FOR TOP TAGS COMPOENT "+this.props.URL)
+        if((this.props.tags).length===0){
         axios.get(this.props.URL+'/categorised')
           .then(response => {
             this.setState({ 
@@ -22,23 +24,23 @@ export default class TopTags extends Component {
           .catch(function (error) {
             console.log(error);
           })
+        }    
     }
     getTags(){
         var myTags = [];
         // eslint-disable-next-line
         this.state.data.map(function(object,i){
             if(object.tags.length !== 0){
-                // console.log(object.tags)
                 myTags.push(...object.tags)            }
         })
         this.countTagOccurences(myTags)
     }
+
     countTagOccurences(tags) {
-        // var counts = {};
         var counts = {}
         var i;
         var value;
-        // tags.sort()
+        
         for (i = 0; i < tags.length; i++) {
             if( tags[i]!=='skipped'){
                 value = tags[i];
@@ -49,15 +51,10 @@ export default class TopTags extends Component {
                 }
             }
         }
-        // var map = Object.entries(counts)
-        // console.log(counts)
+
         var keysSorted = Object.keys(counts).sort(function(a,b){return counts[b]-counts[a]})
         console.log(keysSorted)
         this.setTags(keysSorted);
-        // const tags = [...this.state.tags]
-        // this.sortedTags = tags.map(x => x.text)
-        // console.log(this.sortedTags)
-
     }
     removeTag = selectedTag => {
         const filteredtags = this.state.allTags.filter(tag => {
@@ -66,7 +63,6 @@ export default class TopTags extends Component {
         this.setState({
           allTags: filteredtags    
         })
-        // console.log(this.state.tags);
     }
     addTag = selectedTag => {
         this.props.addTopTag(selectedTag)
@@ -78,7 +74,6 @@ export default class TopTags extends Component {
         })
     }
     getTopFiveTags= tag =>{
-
         return(
             <div className="list-group-item">
                 <a>{tag}</a>

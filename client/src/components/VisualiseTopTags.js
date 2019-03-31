@@ -31,10 +31,10 @@ export default class VisualiseTopTags extends Component {
           })
     }
     handleInput = e => {
-        this.setState({tag: e.target.value}); 
+        this.setState({tag: e.target.value}, this.searchTag); 
       }
       //search method for database
-    searchTag(e){
+    searchTag(){
         // e.preventDefault();
         if(this.state.tag===''){
           axios.get(this.props.URL+'/categorised')
@@ -139,13 +139,13 @@ export default class VisualiseTopTags extends Component {
         const tags = this.state.allTags.slice(0, 20).map(this.getTopTags)
     
         return (
-            <div style={{width: "25%", margin:10}}  className="flex-column border border-secondary border rounded bg-light">
+            <div style={{width: "25%", margin:10}}  className="borders">
                 <h4>Top 20 {this.props.DBName} Tags</h4> 
                 <form className="form-inline justify-content-center" onSubmit={this.searchTag}>
                     <input className="form-control mr-sm-2" onChange={this.handleInput} type="search" placeholder="tag (e.g religion)" aria-label="Search" ></input>
                     <button className="btn btn-outline-success my-2 my-sm-0" type="submit" >Search </button>
                 </form>
-                <table className="table table-striped" style={{ marginTop: 20 }}>
+                <table className="table" style={{ marginTop: 20 }}>
                 <thead>
                     <tr>
                     {/* <th>#</th> */}

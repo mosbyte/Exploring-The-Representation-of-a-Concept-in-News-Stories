@@ -24,7 +24,7 @@ class TableRow extends Component {
             <a href={this.props.obj.link} target="_blank" rel="noopener noreferrer">link</a>
           </td>
           <td>
-            <Link to={this.props.which+'/'+this.props.obj._id} className="btn btn-primary">Edit</Link>
+            <Link to={this.props.editPath+'/'+this.props.obj._id} className="btn btn-primary">Edit</Link>
           </td>
         </tr>
     );

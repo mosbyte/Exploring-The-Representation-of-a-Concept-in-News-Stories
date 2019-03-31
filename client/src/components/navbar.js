@@ -60,7 +60,7 @@ export default class Navbar extends Component {
             <div className="mynav">
                 <header className="navbar navbar-expand navbar-dark flex-column flex-md-row bd-navbar">
                 <div className="container">
-                    <Link to={'/'} className="navbar-brand"><h5>Final Year Project</h5></Link>
+                    {/* <Link to={'/'} className="navbar-brand"><h5>Final Year Project</h5></Link> */}
                     <div className="collapse navbar-collapse " id="navbarSupportedContent">
                     <ul className="navbar-nav mr-auto">
                         <li className="my-nav-item"><Link to={'/'} className="my-nav-item">Home</Link></li>
@@ -77,12 +77,13 @@ export default class Navbar extends Component {
                         </NavDropdown>
                     </ul>
                   </div>
-                  <form className="form-inline my-2 my-lg-0" onSubmit={this.search} onChange={this.handleInput}>
+                  <Link to={'/'} className="navbar-brand"><h5>Final Year Project</h5></Link>
+                  {/* <form className="form-inline my-2 my-lg-0" onSubmit={this.search} onChange={this.handleInput}> */}
                    {/* will only search headlines */}
-                    <input className="form-control mr-sm-2" type="search" placeholder="eg. chant: hooligans" aria-label="Search"></input>
-                    <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    {/* <input className="form-control mr-sm-2" type="search" placeholder="eg. chant: hooligans" aria-label="Search"></input> */}
+                    {/* <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> */}
                     {/* <Link to={this.location}>Search</Link> */}
-                  </form>
+                  {/* </form> */}
                 </div>
               </header> <br/>
             </div>

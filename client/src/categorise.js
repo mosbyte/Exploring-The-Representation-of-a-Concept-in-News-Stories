@@ -12,8 +12,6 @@ export default class Categorise extends Component {
       
         super(props);
 
-        // if(this.props.match.params.id === 'chant'){ this.URL = 'http://csi420-01-vm.ucd.ie:4000/chantnews'; this.proceduralDBName='Chant'} 
-        // else if(this.props.match.params.id === 'ritual'){this.URL = 'http://csi420-01-vm.ucd.ie:4002/ritualnews'; this.proceduralDBName='Ritual'}
         if(this.props.match.params.id === 'chant'){ this.URL = '/chantnews'; this.proceduralDBName = 'Chant'} 
         else if(this.props.match.params.id === 'ritual'){this.URL = '/ritualnews'; this.proceduralDBName = 'Ritual'}
       
@@ -23,16 +21,15 @@ export default class Categorise extends Component {
         this.setStates = this.setStates.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
         this.state = {
+          potentialTags: [],
           tags: [],
           currTag: {
             text: '',
             key: ''
           }
-
         };
       }
       componentDidMount(){
-        // window.location.reload();
         if(this.props.match.params.id!==null){
           axios.get(this.URL+'/new')
           .then(response => {
@@ -43,11 +40,8 @@ export default class Categorise extends Component {
               published: response.data.published,
               source: response.data.source,
               link: response.data.link,
-              // status: response.data.status,
-              // tags: [],
               num: response.data.num,
-              // date_added: response.data.date_added
-            });
+            }, ()=>this.collectPotentialTags());
           })
           .catch(function (error) {
             console.log(error);
@@ -60,20 +54,21 @@ export default class Categorise extends Component {
           window.location.reload();
         }
       }
-      editStory() {
-        axios.get(this.URL+'/id/'+this.props.match.params.id)
-          .then(response => {
-            this.setState({ 
-              id: response.data._id,
-              title: response.data.title,
-              contents: response.data.contents,
-              published: response.data.published,
-              source: response.data.source,
-              link: response.data.link,
-              valid_tags: [],
-
-          });
+      collectPotentialTags = () => {
+        var contents = this.cleanStoryText(this.state.contents)
+        var title = this.cleanStoryText(this.state.title)
+        var source = this.cleanStoryText(this.state.source)
+        var allText = contents + title + source
+        var words = allText.split(" ");
+        this.setState({
+          potentialTags: words
         })
+        }
+      cleanStoryText = (str) => {
+        var removeChars = str.replace(/[,\/#"!$%\^&\*;:{}=\-_`~()]/g,"");
+        removeChars = removeChars.replace(/[.]/g, " ")
+        removeChars = removeChars.replace(/\s{2,}/g," ");
+        return removeChars.toLowerCase()
       }
       handleKeyPress = e => {
         // var altKeyNum = 17;
@@ -125,8 +120,7 @@ export default class Categorise extends Component {
         console.log(this.state.tags)
       }
       addTopTag = tag => {
-        // e.preventDefault()
-        // const topTag = tag;
+
         const topTag = { 
           text: tag,
           key: Date.now()
@@ -188,7 +182,6 @@ export default class Categorise extends Component {
           tags: this.state.valid_tags,
         };
         console.log("what has been submitted "+obj)
-        // await axios.post(this.URL+'/news/add/'+this.state.category, obj).then(res => console.log(res.data));
         axios.post(this.URL+'/update/old/'+this.state.id, obj).then(res => console.log(res.data));
        
         window.location.reload();
@@ -197,9 +190,11 @@ export default class Categorise extends Component {
       render() {
         return (
           <div className="d-flex justify-content-between">
-          <div style={{width: 750, margin:10}}className="flex-column border border-secondary border rounded bg-light">
+          <div style={{width: 750, margin:10}}className="flex-column borders">
             <h4>Top {this.proceduralDBName} Tags</h4>
               <TopTags
+                potentialTags = {this.state.potentialTags}
+                tags = {this.state.tags}
                 URL = {this.URL}
                 addTopTag={this.addTopTag}>
               </TopTags>
@@ -208,7 +203,7 @@ export default class Categorise extends Component {
               Skip: alt + s, 
               Next: alt + n <br></br><br></br>
           </div>
-            <div style={{ margin: 10}} className="border border-secondary border rounded bg-gradient-secondary bg-light">
+            <div style={{ margin: 10}} className="borders bg-gradient-secondary bg-light">
             <div className="form-inline justify-content-center bg-secondary"  style={{padding:5}}>
                 {/* <label className="my-1 mr-2" for="inlineFormCustomSelectPref"></label> */}
                 <TagInput           
@@ -231,7 +226,7 @@ export default class Categorise extends Component {
                   <br></br>
               </div> 
             </div>
-            <div style={{width: 750, margin:10}}className="flex-column border border-secondary border rounded bg-light">
+            <div style={{width: 750, margin:10}}className="flex-column borders">
                 <h4>Added Tags</h4>
                   <button className="btn btn-outline-danger btn-sm" onClick={this.skipStory}>Skip Story-></button> 
                   <button className="btn btn-outline-success btn-sm" onClick={this.onSubmit}>Next Story-></button> 

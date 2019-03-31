@@ -6,75 +6,59 @@ export default class VisualiseDashboard extends Component {
     
     constructor(props){
         super(props);
-        this.setSimilarTags = this.setSimilarTags.bind(this);
+        // this.setSimilarTags = this.setSimilarTags.bind(this);
         this.state = {
-            tag: '',
-            data: [],
-            allTags:[]
+          news: [],
+          freqAssTags: [],
+          similarTags:[],
+          tag: ''
         }
         // this.handleInput = this.handleInput.bind(this);
-        this.searchTag = this.searchTag.bind(this);
+        // this.searchTag = this.searchTag.bind(this);
     }
-    componentDidMount(){
-
-        axios.get(this.props.URL+'/categorised')
-          .then(response => {
-            this.setState({ 
-              data: response.data
-            }, () => this.getTags());
-          })
-          .catch(function (error) {
-            console.log(error);
-          })
-        
-    }
-    componentDidUpdate(prevProps, prevState, snapshot){
-      if(prevProps.location !== this.props.location){
-        window.location.reload();
-      }
-    }
-    searchTag(){
-        console.log(this.props.URL+'/searchsimilar/'+this.props.tag)
-        axios.get(this.props.URL+'/searchsimilar/'+this.props.tag).then(response => {
-            this.setState({ similarTags: response.data }
-          , () => this.getSimilarTags(this.props.tag));
-          })
-          .catch(function (error) {
-            console.log(error);
-          })
-    }
+    
     getSimilarTags(searchTag){
-        console.log("Whhat")
-        var myTags = [];
-        // eslint-disable-next-line
-        this.state.data.map(function(object,i){ // eslint-disable-next-line
-            if(object.tags.length !== 0){
-                myTags.push(...object.tags)}
-        });
-        var similarTags = myTags.filter(function(element){
-            if(element.includes(searchTag)) {
-              return searchTag;
+      console.log("Whhat")
+      var myTags = [];
+      // eslint-disable-next-line
+      this.state.similarTags.map(function(object,i){ 
+          if(object.tags.length !== 0){
+              myTags.push(...object.tags)}
+      });
+      var selectedTags = [];
+      myTags.filter(function(element){
+          if(element.includes(searchTag)) {
+            if(!selectedTags.includes(element)){
+              if(element!==searchTag){
+                selectedTags.push(element)
+              }
+              
             }
-          });
-          console.log(similarTags)
-        this.countTagOccurences(similarTags)
+          }
+        });
+        console.log(selectedTags)
+        this.setState({similarTags:selectedTags})
+
     }
     getTags(){
-        var myTags = [];
-        // eslint-disable-next-line
-        this.state.data.map(function(object,i){ // eslint-disable-next-line
-            if(object.tags.length !== 0){
-                // console.log(object.tags)
-                myTags.push(...object.tags)}
-        });
-        this.countTagOccurences(myTags)
+      var myTags = [];
+      // eslint-disable-next-line
+      this.state.news.map(function(object,i){
+          if(object.tags.length !== 0){
+              myTags.push(...object.tags)}
+      });
+      return myTags
+    }
+    getFrequentlyAssociated(){
+      var tags = this.getTags();
+      var toptags = this.countTagOccurences(tags).slice(1,6)
+      console.log(toptags)
+      this.setState({freqAssTags: toptags})
     }
     countTagOccurences(tags) {
-        // var counts = {};
         var counts = {}
         var i;
         var value;
-        // tags.sort()
         for (i = 0; i < tags.length; i++) {
             if( tags[i]!=='skipped'){
                 value = tags[i];
@@ -85,38 +69,14 @@ export default class VisualiseDashboard extends Component {
                 }
             }
         }
-        console.log("COUNTS: "+counts['trump'])
         var keysSorted = Object.keys(counts).sort(function(a,b){return counts[b]-counts[a]})
-        var tagMap = []
-        keysSorted.forEach(element => {
-          const topTag = { 
-            text: element,
-            occurences: counts[element]
-          }
-          tagMap.push(topTag)
-        });
-        // console.log("KEY SORTED: "+keysSorted)
-        this.setSimilarTags(tagMap);
+        return keysSorted
+      
     }
-    setSimilarTags(tags) {    
+    setTags(tags) {    
         this.setState({
-            similar: tags
-        })
-    }
-    
-    getTopTags= tag =>{
-        return(
-                <tr>
-                  <a href="" onClick={this.props.getTagDashBoard(tag.text)}>
-                     <td>
-                        {tag.text}
-                    </td> 
-                  </a>
-                  <td>
-                    {tag.occurences}
-                  </td>
-                </tr>         
-        )
+            similarTags: tags
+        }, console.log("TAGS"+ this.state.similarTags))
     }
     getClickableTag = tag =>{
         return(
@@ -127,18 +87,25 @@ export default class VisualiseDashboard extends Component {
     }
     render() {
         // this.searchTag()
-        const similarTags = this.state.data.slice(0, 20).map(this.getClickableTag)
+        // const similarTags = this.state.data.slice(0, 20).map(this.getClickableTag)
+        this.getFrequentlyAssociated();
+        // this.getSimilarTags(this.props.tag);
+        var similarTags = this.state.similarTags.toString();
+        var freqAssTags = this.state.freqAssTags.toString();
         return (
 
-            <div style={{width: "75%", margin:10}} className="border border-secondary border rounded bg-light">
-              <h1>Dashboard for {this.props.tag} tag</h1>
-              <div className="toprow d-flex justify-content-between border">
-
-                <div className="stats d-flex align-items-start flex-column" style={{margin:15}}>
-                    <h5>First occurence of tag: </h5>
-                    <h5>Month with most tag cases:</h5>
-                    <h5>Frequently associated tags:</h5>
-                    <h5>Similar tags: {similarTags}</h5>
+            <div style={{width: "75%", margin:10}} className="borders">
+            <h1>{this.proceduralDBName} Visualise Dashboard</h1>
+              <div className="toprow d-flex border" style={{position:'relative'}}><br></br>
+                <div className="stats d-flex align-items-start flex-column" style={{width: "75%",margin:15}}>
+                    <p><b>First occurence of tag: </b></p>
+                    <p><b>Month with most tag cases:</b></p>
+                    <p><b>Frequently associated tags:</b> {freqAssTags}</p>
+                    <p><b>Similar tags: </b>{similarTags}</p>
+                    <br></br>
+                </div>
+                <div style={{position:'absolute', bottom: 5, right: 10}}>
+                  <h2 className="text-bottom">{this.props.tag}</h2>
                 </div>
               </div>
 
