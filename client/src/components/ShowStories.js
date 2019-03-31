@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import TableRow from '../TableRow'
+import TableRow from './TableRow'
 
 export default class ShowStories extends Component {
     
@@ -75,8 +75,17 @@ export default class ShowStories extends Component {
             allTags: tags
         })
     }
-    getTagDashBoard(){
-
+    searchMultiTag(){
+      console.log(this.state.multiTag)
+      axios.get(this.URL+'/search/multitag/'+this.state.multiTag)
+        .then(response => {
+          if(response.data.length>0){
+            this.setState({ news: response.data });
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
     }
     searchTag(e){
       if(this.state.tag===''){
@@ -101,9 +110,10 @@ export default class ShowStories extends Component {
     }
     tabRow(){
       var theEditPath = this.props.editPath
+      console.log("VISUALISE EDIT PATH:"+this.props.editPath)
       var arr = this.props.stories
       return this.props.stories.map(function(object, i){
-          return <TableRow obj={object} index={arr.indexOf(object)+1} key={i} which={theEditPath} />;
+          return <TableRow obj={object} index={arr.indexOf(object)+1} key={i} editPath={theEditPath} />;
       });
     }
     render() {

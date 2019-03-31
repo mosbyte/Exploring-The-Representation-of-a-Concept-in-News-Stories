@@ -14,7 +14,6 @@ export default class AddedTags extends Component {
   }
   render() {
     const tagEntries = this.props.entries
-    // let uniq = a => [...new Set(a)];
     const tags = tagEntries.map(this.createTags)
     return (
       <div>

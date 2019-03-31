@@ -28,14 +28,25 @@ let News = require('./news_model.js').ritual;
   });
   newsRoutes.route('/search/:tag').get(function (req, res) {
     var searchTag = req.params.tag.toString()
-      News.find({'tags': searchTag},(function(err, news){
+      News.find({'tags': { '$regex' : '.*' +searchTag+'.*' }}).sort({date:-1}).exec(function(err, news){
         if(err){
           console.log(err);
         }
         else {
           res.json(news);
         }
-      })); 
+      }); 
+  });
+  newsRoutes.route('/search/multitag/:tags').get(function (req, res) {
+    var multiTag = req.params.tags.split(',')
+      News.find({'tags': { '$all' : multiTag }}).sort({date:-1}).exec(function(err, news){
+        if(err){
+          console.log(err);
+        }
+        else {
+          res.json(news);
+        }
+      }); 
   });
   newsRoutes.route('/searchsimilar/:tag').get(function (req, res) {
     var searchTag = req.params.tag.toString()
@@ -49,27 +60,36 @@ let News = require('./news_model.js').ritual;
       })); 
   });
   newsRoutes.route('/categorised').get(function (req, res) {
-      News.find({'status': 'categorised'},(function(err, news){
+      News.find({'status': 'categorised'}).sort({UpdatedAt:-1}).exec(function(err, news){
       if(err){
         console.log(err);
       }
       else {
         res.json(news);
       }
-    }));
+    });
   });
 
   newsRoutes.route('/new').get(function (req, res) {
-      News.findOne({'status': 'new'},(function(err, news){
+      News.findOne({'status': 'new'}).sort({ date: -1 }).exec(function(err, news){
       if(err){
         console.log(err);
       }
       else {
         res.json(news);
       }
-    }));
+    });
   });
-
+  newsRoutes.route('/new/all').get(function (req, res) {
+      News.find({'status': 'new'}).sort({ date: -1 }).exec(function(err, news){
+      if(err){
+        console.log(err);
+      }
+      else {
+        res.json(news);
+      }
+    });
+  });
   //Defined update route
   newsRoutes.route('/update/old/:id').post(function (req, res) {
     News.findById(req.params.id, function(err, news) {
