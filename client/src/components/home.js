@@ -5,7 +5,7 @@ export default class Home extends Component {
     render() {
         return (
             <div align="center">
-                <h3 style={{width:"80%"}}>This is a research tool exploring how a concept is represented
+                <h3 style={{width:"81.5%", marginTop:20}} className="borders">This is a research tool exploring how a concept is represented
                     in a news story. This research focusses on the specific domains 'chant' & 'ritual'...<br></br><br></br>
                     Please select what operation you would like to do based on either domain:<br></br><br></br>
                 </h3>
