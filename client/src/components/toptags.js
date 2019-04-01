@@ -1,96 +1,24 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 
 export default class TopTags extends Component {
-    constructor(props){
-        super(props);
-        this.setTags = this.setTags.bind(this);
-        this.state = {
-            data: [],
-            storyWords:[],
-            allTags:[]
-        }
-    }
-    componentDidMount(){
-        // axios.get('http://localhost:4000/news/toptags')
-        console.log("FOR TOP TAGS COMPOENT "+this.props.URL)
-        if((this.props.tags).length===0){
-        axios.get(this.props.URL+'/categorised')
-          .then(response => {
-            this.setState({ 
-              data: response.data
-            }, () => this.getTags());
-          })
-          .catch(function (error) {
-            console.log(error);
-          })
-        }    
-    }
-    getTags(){
-        var myTags = [];
-        // eslint-disable-next-line
-        this.state.data.map(function(object,i){
-            if(object.tags.length !== 0){
-                myTags.push(...object.tags)            }
-        })
-        this.countTagOccurences(myTags)
-    }
 
-    countTagOccurences(tags) {
-        var counts = {}
-        var i;
-        var value;
-        
-        for (i = 0; i < tags.length; i++) {
-            if( tags[i]!=='skipped'){
-                value = tags[i];
-                if (typeof counts[value] === "undefined") {
-                    counts[value] = 1;
-                } else {
-                    counts[value]++;
-                }
-            }
-        }
-
-        var keysSorted = Object.keys(counts).sort(function(a,b){return counts[b]-counts[a]})
-        console.log(keysSorted)
-        this.setTags(keysSorted);
-    }
-    removeTag = selectedTag => {
-        const filteredtags = this.state.allTags.filter(tag => {
-          return tag !== selectedTag
-        })
-        this.setState({
-          allTags: filteredtags    
-        })
-    }
     addTag = selectedTag => {
         this.props.addTopTag(selectedTag)
-        this.removeTag(selectedTag)
-    }
-    setTags(tags) {    
-        this.setState({
-            allTags: tags
-        })
+        this.props.removeTopTag(selectedTag)
     }
     getTopFiveTags= tag =>{
         return(
             <div className="list-group-item">
                 <a>{tag}</a>
                 <div className="buttons" style={{float: 'right'}}>
-                    <button className="btn btn-outline-success" onClick={() => this.addTag(tag)}>
-                    +
-                    </button>
-                    <button className="btn btn-outline-danger" key={tag} onClick={() => this.removeTag(tag)}>
-                    -
-                    </button>
-                </div>
-                
+                    <button className="btn btn-outline-success" onClick={() => this.addTag(tag)}>+</button>
+                    <button className="btn btn-outline-danger" key={tag} onClick={() => this.props.removeTopTag(tag)}>-</button>
+                </div>      
             </div>
         )
     }
     render() {
-        const tags = this.state.allTags.slice(0, 5).map(this.getTopFiveTags)
+        var tags = this.props.tags.slice(0,5).map(this.getTopFiveTags)
         return (       
             <div className="list-group"> 
                 {tags}

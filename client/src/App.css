@@ -15,9 +15,8 @@
 }
 .my-nav-item{
   color: white;
+  height: 100%;
   padding-left: 20px;
-}
-.my-nav-item{
   list-style-type: none
 }
 .mynav{

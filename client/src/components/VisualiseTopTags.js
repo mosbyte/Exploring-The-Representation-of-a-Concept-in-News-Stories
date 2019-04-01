@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
-import ViewTag from './ViewTag'
 
 export default class VisualiseTopTags extends Component {
 

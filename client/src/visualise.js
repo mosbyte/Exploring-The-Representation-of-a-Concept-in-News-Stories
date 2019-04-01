@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios'
-import {Link} from 'react-router-dom'
 import TopTags from './components/VisualiseTopTags'
 import ShowStories from './components/ShowStories'
-import DashBoard from './components/VisualiseDashboard'
 
 export default class Visualise extends Component {
 
