@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import axios from 'axios'
 import TopTags from './components/VisualiseTopTags'
 import ShowStories from './components/ShowStories'
+import ReactChartkick, { LineChart, PieChart } from 'react-chartkick'
+import Chart from 'chart.js'
+
+ReactChartkick.addAdapter(Chart)
 
 export default class Visualise extends Component {
 
@@ -17,6 +21,7 @@ export default class Visualise extends Component {
             firstOccurence: '',
             lastOccurence: '',
             mostOccurences: '',
+            occurences: [],
             freqAssTags: [],
             similarTags:[],
             tag: ''
@@ -103,13 +108,13 @@ export default class Visualise extends Component {
     }
     getFrequentlyAssociated(){
       var tags = this.getTags();
-      var toptags = this.countTagOccurences(tags).slice(1,6)
+      var toptags = this.countTagOccurences("tops",tags).slice(1,6)
       console.log(toptags)
       this.setState({freqAssTags: toptags})
     }
-    countTagOccurences(tags) {
+    countTagOccurences(which, tags) {
         var counts = {}
-        var i;
+        var i, x;
         var value;
         for (i = 0; i < tags.length; i++) {
             if( tags[i]!=='skipped'){
@@ -122,7 +127,12 @@ export default class Visualise extends Component {
             }
         }
         var keysSorted = Object.keys(counts).sort(function(a,b){return counts[b]-counts[a]})
-        return keysSorted      
+        if(which==='counts'){
+          x = counts
+        }else{
+          x = keysSorted
+        }
+        return x;    
     }
     setTags(tags) {    
         this.setState({
@@ -133,16 +143,21 @@ export default class Visualise extends Component {
       var first = this.state.news[this.state.news.length-1]
       var last = this.state.news[0]
       var dates = [];
+      var numericalDates = [];
       this.state.news.map(function(object,i){
           var date = object.published.split('-')
-          // console.log(date)
           dates.push(date[0])
+          var numericalDate = object.UpdatedAt.split('T')
+          numericalDates.push(numericalDate[0])
       });
-      var topDate = this.countTagOccurences(dates)
+      var topDate = this.countTagOccurences('top',dates)
+      var topNumericalDates = this.countTagOccurences('counts',numericalDates)
+      console.log(topNumericalDates)
       this.setState({
         firstOccurence: first.published,
         lastOccurence: last.published,
-        mostOccurences: topDate[0]
+        mostOccurences: topDate[0],
+        occurences: topNumericalDates
       })
     }
     getInfo(){
@@ -192,6 +207,7 @@ export default class Visualise extends Component {
                     <p><b>Date with most tag occurences:</b> {mostOccurences}</p>
                     <p><b>Frequently associated tags:</b> {freqAssTags}</p>
                     <p><b>Similar tags: </b>{similarTags}</p>
+                    <LineChart data={this.state.occurences} />
                     <br></br>
                 </div>
                 <div style={{position:'absolute', bottom: 5, right: 10}}>
