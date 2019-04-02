@@ -147,7 +147,7 @@ export default class Visualise extends Component {
       this.state.news.map(function(object,i){
           var date = object.published.split('-')
           dates.push(date[0])
-          var numericalDate = object.UpdatedAt.split('T')
+          var numericalDate = object.date.split('T')
           numericalDates.push(numericalDate[0])
       });
       var topDate = this.countTagOccurences('top',dates)
