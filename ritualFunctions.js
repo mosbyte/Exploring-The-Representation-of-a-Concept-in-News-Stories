@@ -81,7 +81,7 @@ let News = require('./news_model.js').ritual;
     });
   });
   newsRoutes.route('/new/all').get(function (req, res) {
-      News.find({'status': 'new'}).sort({ date: -1 }).exec(function(err, news){
+      News.find({'status': 'new'}).limit(300).sort({ date: -1 }).exec(function(err, news){
       if(err){
         console.log(err);
       }
