@@ -15,6 +15,7 @@ export default class Categorise extends Component {
         if(this.props.match.params.id === 'chant'){ this.URL = '/chantnews'; this.proceduralDBName = 'Chant'} 
         else if(this.props.match.params.id === 'ritual'){this.URL = '/ritualnews'; this.proceduralDBName = 'Ritual'}
       
+        this.collectPotentialTags = this.collectPotentialTags.bind(this);
         this.setUpTags = this.setUpTags.bind(this);
         this.skipStory = this.skipStory.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -60,7 +61,6 @@ export default class Categorise extends Component {
       tagSuggestionsFromInput(){
         var tags = this.state.tags;
         if(tags.length===0){
-            console.log("FOR TOP TAGS COMPOENT "+this.URL)
             axios.get(this.URL+'/categorised')
             .then(response => {
                 this.setState({ 
@@ -72,7 +72,6 @@ export default class Categorise extends Component {
                 console.log(error);
             })
         }else{
-            console.log("TEST")
             var multi_tags = tags.map(x => x.text)
             axios.get(this.URL+'/search/multitag/'+multi_tags)
             .then(response => {
@@ -93,30 +92,39 @@ export default class Categorise extends Component {
                 myTags.push(...object.tags)              
             }
         })
-        // this.collectPotentialTags()
-        this.countTagOccurences(myTags)
+        var potentialTags = this.collectPotentialTags()
+        this.countTagOccurences(myTags, potentialTags)
       }
 
-      countTagOccurences(tags) {
+      countTagOccurences(tags, potentialTags) {
+          var importance = 1000000 //one million
           var counts = {}
           var i;
           var value;
           var multiTags = this.state.multiTag
           var unique = tags.filter(function(obj) { return multiTags.indexOf(obj) == -1; });
-          console.log("unique!!"+unique)
           for (i = 0; i < unique.length; i++) {
-              if( unique[i]!=='skipped'){
+              if(unique[i]!=='skipped'){
                   value = unique[i];
                   if (typeof counts[value] === "undefined") {
-                      counts[value] = 1;
-                  } else {
-                      counts[value]++;                          
+                      console.log("undefined counting")
+                      if(potentialTags.includes(value)){
+                        counts[value]=importance
+                      }else{
+                        counts[value]=1
+                      }      
+                  }      
+                   else {               
+                    if(potentialTags.includes(value)){
+                      counts[value]+=importance
+                    }else{
+                      counts[value]++
+                    }                                                                   
                   }
               }
-          }
-          
+          } 
+          console.log(counts)
           var keysSorted = Object.keys(counts).sort(function(a,b){return counts[b]-counts[a]})
-          console.log(keysSorted)
           this.setTags(keysSorted);
       }
       setTags(tags) {    
@@ -127,13 +135,10 @@ export default class Categorise extends Component {
       collectPotentialTags = () => {
         var contents = this.cleanStoryText(this.state.contents)
         var title = this.cleanStoryText(this.state.title)
-        var source = this.cleanStoryText(this.state.source)
-        var allText = contents + title + source
+        var allText = contents + title
         var words = allText.split(" ");
-        this.setState({
-          potentialTags: words
-        })
-        console.log(words)
+        return words;
+        // console.log(words)
       }
       cleanStoryText = (str) => {
         var removeChars = str.replace(/[,\/#"!$%\^&\*;:{}=\-_`~()]/g,"");
@@ -195,12 +200,10 @@ export default class Categorise extends Component {
           text: tag,
           key: Date.now()
         }
-        console.log(topTag)
         const tags = [...this.state.tags, topTag]
         this.setState({
           tags: tags
         }, this.tagSuggestionsFromInput)
-        console.log(this.state.tags)
       }
       removeTopTag = selectedTag => {
         const filteredtags = this.state.allTags.filter(tag => {
@@ -271,7 +274,6 @@ export default class Categorise extends Component {
           <div style={{width: 750, margin:10}}className="flex-column borders">
             <h4>Suggested {this.proceduralDBName} Tags</h4>
               <TopTags
-                potentialTags = {this.state.potentialTags}
                 tags = {this.state.allTags}
                 URL = {this.URL}
                 removeTopTag = {this.removeTopTag}

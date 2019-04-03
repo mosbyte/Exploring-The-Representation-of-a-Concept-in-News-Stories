@@ -24,9 +24,18 @@
   color: azure;
   height: 4em;
 }
-/* .navbar-brand {
-  color: #563d7c !important;
-} */
+.nav-group-item{
+  overflow:hidden;  
+  position: relative;
+  display: block;
+  color: white;
+  padding: 10px 15px;
+  margin-bottom: -1px;
+  /* border: 1px solid #ddd; */
+}
+.nav-group-item::hover{
+  color: white;
+}
 .nav-link {
   color: black !important
 }

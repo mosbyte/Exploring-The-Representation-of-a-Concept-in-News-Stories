@@ -96,7 +96,6 @@ export default class VisualiseTopTags extends Component {
                 }
             }
         }
-        console.log("COUNTS: "+counts['trump'])
         var keysSorted = Object.keys(counts).sort(function(a,b){return counts[b]-counts[a]})
         var tagMap = []
         keysSorted.forEach(element => {
@@ -111,13 +110,11 @@ export default class VisualiseTopTags extends Component {
        
     }
     setTags(tags) {
-        console.log(tags)  
         this.setState({
             allTags: tags
         })
     }
     viewTag = selectedTag => {
-        console.log(selectedTag)
         this.props.getTagDashBoard(selectedTag)
         // this.props.getTagDashBoard(selectedTag);
     }

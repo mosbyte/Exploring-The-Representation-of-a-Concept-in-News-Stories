@@ -17,6 +17,10 @@ export default class Edit extends Component {
         this.setStates = this.setStates.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
         this.state = {
+          potentialTags: [],
+          allTags: [],
+          data: [],
+          multiTag: [],
           tags: [],
           currTag: {
             text: '',
@@ -25,8 +29,6 @@ export default class Edit extends Component {
         };
       }
       componentDidMount(){
-        console.log(this.props.match.params.which)
-        console.log(this.props.match.params.id)
         var id =this.props.match.params.id
           axios.get(this.URL+'/edit/'+id)
           .then(response => {
@@ -38,13 +40,102 @@ export default class Edit extends Component {
               source: response.data.source,
               link: response.data.link,
               prev_tags: response.data.tags
-            }, this.addPrevioustags);
+            }, this.addPrevioustags, this.tagSuggestionsFromInput);
           })
           .catch(function (error) {
             console.log("IT NEVER RECEIVED")
             console.log(error);
           })
           document.addEventListener('keydown', this.handleKeyPress);
+      }
+      componentDidUpdate(prevProps, prevState, snapshot){
+        if(prevProps.location !== this.props.location){
+          window.location.reload();
+        }
+      }
+      tagSuggestionsFromInput(){
+        var tags = this.state.tags;
+        if(tags.length===0){
+            console.log("FOR TOP TAGS COMPOENT "+this.URL)
+            axios.get(this.URL+'/categorised')
+            .then(response => {
+                this.setState({ 
+                data: response.data, 
+                multiTag: []
+                }, () => this.getTags());
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+        }else{
+            console.log("TEST")
+            var multi_tags = tags.map(x => x.text)
+            axios.get(this.URL+'/search/multitag/'+multi_tags)
+            .then(response => {
+                this.setState({ 
+                data: response.data,
+                multiTag: multi_tags
+                }, () => this.getTags());
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+        }     
+      }
+      getTags(){
+        var myTags = [];
+        this.state.data.map(function(object,i){
+            if(object.tags.length !== 0){
+                myTags.push(...object.tags)              
+            }
+        })
+        // this.collectPotentialTags()
+        this.countTagOccurences(myTags)
+      }
+
+      countTagOccurences(tags) {
+          var counts = {}
+          var i;
+          var value;
+          var multiTags = this.state.multiTag
+          var unique = tags.filter(function(obj) { return multiTags.indexOf(obj) == -1; });
+          console.log("unique!!"+unique)
+          for (i = 0; i < unique.length; i++) {
+              if( unique[i]!=='skipped'){
+                  value = unique[i];
+                  if (typeof counts[value] === "undefined") {
+                      counts[value] = 1;
+                  } else {
+                      counts[value]++;                          
+                  }
+              }
+          }
+          
+          var keysSorted = Object.keys(counts).sort(function(a,b){return counts[b]-counts[a]})
+          console.log(keysSorted)
+          this.setTags(keysSorted);
+      }
+      setTags(tags) {    
+        this.setState({
+            allTags: tags
+        })
+      }
+      collectPotentialTags = () => {
+        var contents = this.cleanStoryText(this.state.contents)
+        var title = this.cleanStoryText(this.state.title)
+        var source = this.cleanStoryText(this.state.source)
+        var allText = contents + title + source
+        var words = allText.split(" ");
+        this.setState({
+          potentialTags: words
+        })
+        console.log(words)
+      }
+      cleanStoryText = (str) => {
+        var removeChars = str.replace(/[,\/#"!$%\^&\*;:{}=\-_`~()]/g,"");
+        removeChars = removeChars.replace(/[.]/g, " ")
+        removeChars = removeChars.replace(/\s{2,}/g," ");
+        return removeChars.toLowerCase()
       }
       handleKeyPress = e => {
    
@@ -54,7 +145,7 @@ export default class Edit extends Component {
         }
       }
       handleInput = e => {
-        var delimiters = [",", " "];
+        var delimiters = [","];
         const itemText = e.target.value.toLowerCase();
         console.log(itemText)
         const currTag = { 
@@ -72,7 +163,12 @@ export default class Edit extends Component {
     
       addTag = e => {
         e.preventDefault()
-        const newTag = this.state.currTag
+        var currTag = this.state.currTag;
+        const newTag = { 
+            text: currTag.text.toLowerCase().replace(/\s/g,''),
+            key: currTag.key
+          }
+        // newTag = newTag.text.toLowerCase().replace(/\s/g,'');
         if (newTag.text !== "") {
           console.log(newTag)
           const tags = [...this.state.tags, newTag]
@@ -82,23 +178,42 @@ export default class Edit extends Component {
               text: "",
               key: "" 
             }
-          })
+          }, this.tagSuggestionsFromInput)
           console.log(this.state.tags)
         }
         console.log(this.state.tags)
       }
-      addTopTag = tag => { 
+      addTopTag = tag => {
         const topTag = { 
           text: tag,
           key: Date.now()
         }
         console.log(topTag)
-        const mytags = [...this.state.tags, topTag]
-        this.setState({tags: mytags});
+        const tags = [...this.state.tags, topTag]
+        this.setState({
+          tags: tags
+        }, this.tagSuggestionsFromInput)
+        console.log(this.state.tags)
+      }
+      removeTopTag = selectedTag => {
+        const filteredtags = this.state.allTags.filter(tag => {
+          return tag !== selectedTag
+        })
+        this.setState({
+          allTags: filteredtags    
+        })
+      }
+      removeTag = tag => {
+        const filteredtags = this.state.tags.filter(item => {
+          return item.key !== tag
+        })
+        this.setState({
+          tags: filteredtags    
+        }, this.tagSuggestionsFromInput)
+        console.log(this.state.tags);
       }
       addPrevioustags = () =>{
         var xx = this.state.prev_tags;
-        console.log(xx)
         var prevTags = []
         xx.forEach(element => {
           const prevTag = { 
@@ -107,18 +222,8 @@ export default class Edit extends Component {
           }
           prevTags.push(prevTag);
         });
-        console.log(prevTags)
         this.setState({tags: prevTags},);
       }
-      removeTag = key => {
-        const filteredtags = this.state.tags.filter(item => {
-          return item.key !== key
-        })
-        this.setState({
-          tags: filteredtags    
-        })
-        console.log(this.state.tags);
-      } 
       setUpTags() {
         const tags = [...this.state.tags]
         var arr_tags = tags.map(x => x.text)
@@ -167,6 +272,9 @@ export default class Edit extends Component {
           <div style={{width: 750, margin:10}}className="flex-column border border-secondary border rounded bg-light">
             <h4>Top Tags</h4>
               <TopTags
+                potentialTags = {this.state.potentialTags}
+                tags = {this.state.allTags}
+                removeTopTag = {this.removeTopTag}
                 URL={this.URL}
                 addTopTag={this.addTopTag}>
               </TopTags>

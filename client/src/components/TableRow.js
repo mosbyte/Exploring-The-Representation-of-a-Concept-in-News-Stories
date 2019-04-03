@@ -21,6 +21,9 @@ class TableRow extends Component {
             {this.props.obj.tags.join(', ')}
           </td>
           <td>
+            {(this.props.obj.published.split('-'))[0]}
+          </td>
+          <td>
             <a href={this.props.obj.link} target="_blank" rel="noopener noreferrer">link</a>
           </td>
           <td>

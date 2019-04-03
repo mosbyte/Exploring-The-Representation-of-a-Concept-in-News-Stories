@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios'
 import TopTags from './components/VisualiseTopTags'
 import ShowStories from './components/ShowStories'
-import ReactChartkick, { LineChart, PieChart } from 'react-chartkick'
+import ReactChartkick, { LineChart } from 'react-chartkick'
 import Chart from 'chart.js'
 
 ReactChartkick.addAdapter(Chart)
@@ -30,15 +30,6 @@ export default class Visualise extends Component {
         this.searchTag = this.searchTag.bind(this);
         this.searchMultiTag = this.searchMultiTag.bind(this);
       }
-    componentDidMount(){
-      axios.get(this.URL+'/search/'+this.state.tag)
-        .then(response => {
-          this.setState({ news: response.data });
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
     componentDidUpdate(prevProps, prevState, snapshot){
       if(prevProps.location !== this.props.location){
         window.location.reload();
@@ -77,10 +68,10 @@ export default class Visualise extends Component {
           })
       }
     }
-    getSimilarTags(searchTag){
+    getSimilarTags(searchTag, data){
       var myTags = [];
       // eslint-disable-next-line
-      this.state.similarTags.map(function(object,i){ 
+      data.map(function(object,i){ 
           if(object.tags.length !== 0){
               myTags.push(...object.tags)}
       });
@@ -94,7 +85,6 @@ export default class Visualise extends Component {
             }
           }
         });
-        console.log(selectedTags)
         this.setState({similarTags:selectedTags})
     }
     getTags(){
@@ -109,7 +99,6 @@ export default class Visualise extends Component {
     getFrequentlyAssociated(){
       var tags = this.getTags();
       var toptags = this.countTagOccurences("tops",tags).slice(1,6)
-      console.log(toptags)
       this.setState({freqAssTags: toptags})
     }
     countTagOccurences(which, tags) {
@@ -152,7 +141,6 @@ export default class Visualise extends Component {
       });
       var topDate = this.countTagOccurences('top',dates)
       var topNumericalDates = this.countTagOccurences('counts',numericalDates)
-      console.log(topNumericalDates)
       this.setState({
         firstOccurence: first.published,
         lastOccurence: last.published,
@@ -165,7 +153,6 @@ export default class Visualise extends Component {
       this.getOccurenceOfTag();
     }
     getTagDashBoard = searchTag =>{
-      console.log(searchTag)
       axios.get(this.URL+'/search/'+searchTag)
         .then(response => {
           this.setState({ news: response.data, tag: searchTag }, this.getInfo);
@@ -174,8 +161,7 @@ export default class Visualise extends Component {
           console.log(error);
         })
       axios.get(this.URL+'/searchsimilar/'+searchTag).then(response => {
-          this.setState({ similarTags: response.data }
-        , () => this.getSimilarTags(this.state.tag));
+          this.getSimilarTags(this.state.tag, response.data);
         })
         .catch(function (error) {
           console.log(error);

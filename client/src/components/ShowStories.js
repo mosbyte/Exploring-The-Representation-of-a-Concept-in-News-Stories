@@ -14,7 +14,6 @@ export default class ShowStories extends Component {
         }
     }
     componentDidMount(){
-        console.log("MY URL = "+ this.props.URL)
         axios.get(this.props.URL)
           .then(response => {
             this.setState({ 
@@ -56,7 +55,6 @@ export default class ShowStories extends Component {
                 }
             }
         }
-        console.log("COUNTS: "+counts['trump'])
         var keysSorted = Object.keys(counts).sort(function(a,b){return counts[b]-counts[a]})
         var tagMap = []
         keysSorted.forEach(element => {
@@ -110,7 +108,6 @@ export default class ShowStories extends Component {
     }
     tabRow(){
       var theEditPath = this.props.editPath
-      console.log("VISUALISE EDIT PATH:"+this.props.editPath)
       var arr = this.props.stories
       return this.props.stories.map(function(object, i){
           return <TableRow obj={object} index={arr.indexOf(object)+1} key={i} editPath={theEditPath} />;
@@ -127,6 +124,7 @@ export default class ShowStories extends Component {
                       <th>Title</th>
                       <th>Status</th>
                       <th>Tags</th>
+                      <th>Published</th>
                       <th>Link</th>
                       <th colSpan="2">Action</th>
                     </tr>
