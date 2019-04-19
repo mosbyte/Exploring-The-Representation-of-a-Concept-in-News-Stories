@@ -9,8 +9,6 @@ export default class ViewTag extends Component {
                            
             <tr>
                 <td>
-                    {/* <Link to={this.props.URL+'/visualise/'+tag.text}>{tag.text}</Link> */}
-                    {/* <button onClick={this.props.getTagDashBoard(tag.text)}>{tag.text}</button> */}
                     <button onClick={this.props.getTagDashBoard(this.props.text)}>{this.props.tag}</button>
                 </td> 
                 <td>

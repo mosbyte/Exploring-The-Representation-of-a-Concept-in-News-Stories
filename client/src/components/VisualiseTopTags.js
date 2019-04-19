@@ -3,8 +3,6 @@ import axios from 'axios';
 
 export default class VisualiseTopTags extends Component {
 
-    // inputElement = React.createRef()
-
     constructor(props){
         super(props);
         this.setTags = this.setTags.bind(this);
@@ -81,11 +79,9 @@ export default class VisualiseTopTags extends Component {
         this.countTagOccurences(myTags)
     }
     countTagOccurences(tags) {
-        // var counts = {};
         var counts = {}
         var i;
         var value;
-        // tags.sort()
         for (i = 0; i < tags.length; i++) {
             if( tags[i]!=='skipped'){
                 value = tags[i];
@@ -105,7 +101,6 @@ export default class VisualiseTopTags extends Component {
           }
           tagMap.push(topTag)
         });
-        // console.log("KEY SORTED: "+keysSorted)
         this.setTags(tagMap);
        
     }
@@ -116,7 +111,6 @@ export default class VisualiseTopTags extends Component {
     }
     viewTag = selectedTag => {
         this.props.getTagDashBoard(selectedTag)
-        // this.props.getTagDashBoard(selectedTag);
     }
     getTopTags= tag =>{
         return(  
@@ -135,7 +129,7 @@ export default class VisualiseTopTags extends Component {
     
         return (
             <div style={{width: "25%", margin:10}}  className="borders">
-                <h4>Top 20 {this.props.DBName} Tags</h4> 
+                <h4>Top {this.props.DBName} Tags</h4> 
                 <form className="form-inline justify-content-center" onSubmit={this.searchTag}>
                     <input className="form-control mr-sm-2" onChange={this.handleInput} type="search" placeholder="tag (e.g religion)" aria-label="Search" ></input>
                     <button className="btn btn-outline-success my-2 my-sm-0" type="submit" >Search </button>
@@ -143,7 +137,6 @@ export default class VisualiseTopTags extends Component {
                 <table className="table" style={{ marginTop: 20 }}>
                 <thead>
                     <tr>
-                    {/* <th>#</th> */}
                     <th>Tag</th>
                     <th>#</th>
                     </tr>

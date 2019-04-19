@@ -262,8 +262,8 @@ export default class Edit extends Component {
         console.log("what has been submitted "+obj)
         // await axios.post(this.URL+'/news/add/'+this.state.category, obj).then(res => console.log(res.data));
         axios.post(this.URL+'/update/old/'+this.state.id, obj).then(res => console.log(res.data));
-       
-        this.props.history.push(this.URL+'/database');
+        
+        this.props.history.push(this.URL.replace("news","")+'/database');
       }
      
       render() {

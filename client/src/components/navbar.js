@@ -41,7 +41,7 @@ export default class Navbar extends Component {
                 <div className="container">
                     {/* <Link to={'/'} className="navbar-brand"><h5>Final Year Project</h5></Link> */}
                     <div className="collapse navbar-collapse navbar-nav" id="navbarSupportedContent">
-                        <a className="nav-list-item"><Link to={'/'} className="nav-group-item">Home</Link></a>
+                        <Link to={'/'} className="nav-group-item">Home</Link>
 
                         <NavDropdown name="Chant" className='my-nav-link'>
                             <li className="dropdown-item"><Link to={'/chant/categorise'} className="nav-link">Categorise</Link></li>
