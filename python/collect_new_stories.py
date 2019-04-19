@@ -12,9 +12,10 @@ def main():
         rss_link = gmail_api.query_unread_emails(service,term)
         scraper = xml_parse.scrape()
         data = scraper.scrape_xml(rss_link)
-        db = mongo_news_db.Database()
-        db.add_to_correct_db(term,data)
-        data = []
+        if len(data) != 0:
+                db = mongo_news_db.Database()
+                db.add_to_correct_db(term,data)
+                data = []
 
 if __name__ == "__main__":
     main()

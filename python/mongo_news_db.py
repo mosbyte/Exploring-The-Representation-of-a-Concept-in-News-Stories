@@ -5,14 +5,18 @@ import datetime
 class Database():
 
 	def add_to_correct_db(self,term, data):
-		if(term=='chant'):
-			print("adding to chant database\n")
-			self.add_to_chant_db(data)
-		elif(term=='ritual'):
-			print("adding to ritual database\n")
-			self.add_to_ritual_db(data)
-		else:
-			print("Error with term")
+		try:
+			if(term=='chant'):
+				print("adding to chant database\n")
+				self.add_to_chant_db(data)
+			elif(term=='ritual'):
+				print("adding to ritual database\n")
+				self.add_to_ritual_db(data)
+			else:
+				print("Error with term")
+
+		except:
+			print("Error adding data to db for this term")
 
 	def add_to_chant_db(self, data):
 		# creating the local client for the database

@@ -81,7 +81,7 @@ class scrape():
 			self.store_data(titles,contents,published,source)
 
 		except:
-			print("error with url")
+			print("No Valid RSS link received")
 		
 		data = self.news_items['items']
 		self.news_items['items'] = []
