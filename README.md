@@ -2,12 +2,8 @@
 
 **Tomás Mc Phillips - 15382091**
 
-**Note**: This code is connected to the gmail account chantritualresearch@gmail.com and the script will search for unread emails scrape their data and mark them as read. If no unread emails are available this will be shown on the terminal and the results outputted to an additions.txt file in the same directory, otherwise the data will be added to the local instance of Mongo DB running on your machine which may have an impact on the research of Dr. Cummins. This tool is hosted on csi420-01-vm4.ucd.ie and is currently being used for research while migration to Dr. Cummins' personal server is underway. Therefore no submission of tags for stories should be performed when visiting. Instructions on how to collect the news stories and begin the web application locally are provided below.
-
-**Note:** It is necessary to pull files from git as the submission was to large for Moodle
-All files for this project can be pulled from git: 
-Git Repo: https://github.com/mosbyte/Exploring-The-Representation-of-a-Concept-in-News-Stories.git
-
+**Explanation of Project**
+The code contained in this Repo is that used for my Final Year Project which involved creating a custom research tool. I developed a dynamic database of web-scraped stories, added to daily with a Python script that interacts with the GmailAPI & MongoDB. The MERN stack was used for front-end and back-end design & development for this full stack project. I deployed the solution to a Linux server. The tool is live and used in research.
 
 ## To Perform the Collection of News Stories
 
@@ -24,7 +20,7 @@ Git Repo: https://github.com/mosbyte/Exploring-The-Representation-of-a-Concept-i
 
 **collect_new_stories.py**   - Run this script to collect news stories for chant and ritual and add them to their appropriate database collection. The collection process handles chant first and then ritual.
 
-**gmail_collect.py**    -   This file will connect to the gmail account chantritualresearch@gmail.com using the credentials.json and token.pickle file. It will open any unread emails for chant and ritual, scrape their RSS link and marke the email as closed.
+**gmail_collect.py**    -   This file will connect to the gmail account chantritual1@gmail.com using the credentials.json and token.pickle file. It will open any unread emails for chant and ritual, scrape their RSS link and marke the email as closed.
 
 **xml_parse.py**  -   This file contains the Scrape class which is responsible for web scraping a RSS link received, cleaning the data set and then returning the data so it can be stored in the database.
 
